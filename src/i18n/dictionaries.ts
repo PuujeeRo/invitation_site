@@ -106,6 +106,15 @@ const dictionaries = {
       watermark: "Made with Naashir",
       viewMap: "View on map",
     },
+    upgrade: {
+      featureNoWatermark: "No watermark",
+      featureUnlimitedGuests: "Unlimited RSVP guests",
+      featureCustomDesign: "Custom design / theme colors",
+      featureCustomText: "Custom invitation text",
+      featureMedia: "Photo / video upload, map link, countdown timer",
+      payButton: "Pay {price}₮",
+      paidBanner: "Payment received — this invitation is fully unlocked 🎉",
+    },
   },
   mn: {
     common: {
@@ -209,6 +218,15 @@ const dictionaries = {
       expired: "Энэ урилгын 7 хоногийн үнэгүй хугацаа дууссан байна. Зохион байгуулагчаас идэвхжүүлэхийг хүснэ үү.",
       watermark: "Naashir-аар үүсгэсэн",
       viewMap: "Газрын зураг харах",
+    },
+    upgrade: {
+      featureNoWatermark: "Watermark байхгүй",
+      featureUnlimitedGuests: "Хязгааргүй RSVP зочид",
+      featureCustomDesign: "Загвар өнгө өөрчлөх боломж",
+      featureCustomText: "Урилгын текстээ өөрчлөх боломж",
+      featureMedia: "Зураг/видео, газрын зураг, countdown timer",
+      payButton: "{price}₮-өөр төлөх",
+      paidBanner: "Төлбөр амжилттай орлоо — урилга бүрэн идэвхжлээ 🎉",
     },
   },
 };

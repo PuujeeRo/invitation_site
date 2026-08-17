@@ -12,10 +12,13 @@ import type { EventRow, NamedGuestRow } from "@/lib/supabase/types";
 
 export default async function EventOverviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ eventId: string }>;
+  searchParams: Promise<{ paid?: string }>;
 }) {
   const { eventId } = await params;
+  const { paid } = await searchParams;
   const supabase = await createClient();
 
   const { data: event } = await supabase
@@ -56,6 +59,12 @@ export default async function EventOverviewPage({
           {t.eventOverview.viewResponses}
         </Link>
       </div>
+
+      {paid === "1" && event.is_paid && (
+        <div className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+          {t.upgrade.paidBanner}
+        </div>
+      )}
 
       {!event.is_paid && (
         <div className="mt-4 flex items-center justify-between rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
