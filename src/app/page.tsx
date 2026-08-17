@@ -21,12 +21,20 @@ export default async function Home() {
           {t.landing.title}
         </h1>
         <p className="mt-4 max-w-md text-lg text-zinc-600 dark:text-zinc-400">{t.landing.subtitle}</p>
-        <Link
-          href="/login"
-          className="mt-8 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white visited:text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:visited:text-zinc-900 dark:hover:bg-zinc-200"
-        >
-          {t.landing.cta}
-        </Link>
+        <div className="mt-8 flex items-center gap-4">
+          <Link
+            href="/login"
+            className="rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white visited:text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:visited:text-zinc-900 dark:hover:bg-zinc-200"
+          >
+            {t.landing.cta}
+          </Link>
+          <Link
+            href="/demo"
+            className="text-sm font-medium text-zinc-700 underline underline-offset-4 visited:text-zinc-700 dark:text-zinc-300 dark:visited:text-zinc-300"
+          >
+            {t.landing.demoCta}
+          </Link>
+        </div>
       </div>
     </div>
   );

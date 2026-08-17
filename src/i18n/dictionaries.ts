@@ -13,6 +13,7 @@ const dictionaries = {
       subtitle:
         "Create an animated invitation, share the link on Messenger, and watch RSVPs come in live.",
       cta: "Create an invitation",
+      demoCta: "See a live demo",
     },
     login: {
       heading: "Sign in to Naashir",
@@ -112,6 +113,15 @@ const dictionaries = {
       subtitle: "This page drifted off somewhere. Let's get you back on course.",
       backHome: "Back to home",
     },
+    demo: {
+      title: "See it in action",
+      subtitle: "Sample data, no account needed — pick an event and template to see what guests see.",
+      sampleEventLabel: "Sample event",
+      templateLabel: "Template",
+      paidToggleLabel: "Preview paid features",
+      rsvpNotSaved: "This is a demo — your response isn't saved.",
+      cta: "Create your own invitation",
+    },
     invite: {
       notFound: "This invitation link doesn't exist.",
       expired:
@@ -156,6 +166,7 @@ const dictionaries = {
       title: "Хэдхэн товшилтоор гоё урилга илгээ",
       subtitle: "Хөдөлгөөнт урилга үүсгэж, Messenger-ээр линкээ хуваалцаад, RSVP хариултыг шууд хараарай.",
       cta: "Урилга үүсгэх",
+      demoCta: "Жишээг үзэх",
     },
     login: {
       heading: "Naashir-д нэвтрэх",
@@ -254,6 +265,15 @@ const dictionaries = {
       title: "Сансарт төөрчихлөө",
       subtitle: "Энэ хуудас хаа нэгтээ хөвж явна. Буцаад замд оруулъя.",
       backHome: "Нүүр хуудас руу буцах",
+    },
+    demo: {
+      title: "Бодит жишээ үзэх",
+      subtitle: "Жишээ өгөгдөл, бүртгэл шаардлагагүй — арга хэмжээ, загвар сонгоод зочид юу харахыг үзээрэй.",
+      sampleEventLabel: "Жишээ арга хэмжээ",
+      templateLabel: "Загвар",
+      paidToggleLabel: "Төлбөртэй боломжуудыг үзэх",
+      rsvpNotSaved: "Энэ бол жишээ — таны хариулт хадгалагдаагүй.",
+      cta: "Өөрийн урилгаа үүсгэх",
     },
     invite: {
       notFound: "Энэ урилгын линк олдсонгүй.",
