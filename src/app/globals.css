@@ -43,3 +43,31 @@ body {
   animation: naashir-fade-in-up 0.6s ease-out both;
 }
 
+@keyframes naashir-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(3deg);
+  }
+}
+
+.animate-float {
+  animation: naashir-float 5s ease-in-out infinite;
+}
+
+@keyframes naashir-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-twinkle {
+  animation: naashir-twinkle 2.4s ease-in-out infinite;
+}
+

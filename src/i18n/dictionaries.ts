@@ -106,6 +106,12 @@ const dictionaries = {
       limitReached: "This invitation reached its free guest limit. Ask the organizer to upgrade.",
       expired: "This invitation is no longer accepting responses.",
     },
+    notFoundPage: {
+      code: "404",
+      title: "Lost in space",
+      subtitle: "This page drifted off somewhere. Let's get you back on course.",
+      backHome: "Back to home",
+    },
     invite: {
       notFound: "This invitation link doesn't exist.",
       expired:
@@ -242,6 +248,12 @@ const dictionaries = {
       errorGeneric: "Алдаа гарлаа. Дахин оролдоно уу.",
       limitReached: "Энэ урилга үнэгүй зочны хязгаартаа хүрсэн байна. Зохион байгуулагчаас идэвхжүүлэхийг хүснэ үү.",
       expired: "Энэ урилга хариу авахаа больсон байна.",
+    },
+    notFoundPage: {
+      code: "404",
+      title: "Сансарт төөрчихлөө",
+      subtitle: "Энэ хуудас хаа нэгтээ хөвж явна. Буцаад замд оруулъя.",
+      backHome: "Нүүр хуудас руу буцах",
     },
     invite: {
       notFound: "Энэ урилгын линк олдсонгүй.",

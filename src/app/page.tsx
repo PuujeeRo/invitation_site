@@ -23,7 +23,7 @@ export default async function Home() {
         <p className="mt-4 max-w-md text-lg text-zinc-600 dark:text-zinc-400">{t.landing.subtitle}</p>
         <Link
           href="/login"
-          className="mt-8 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-8 rounded-full bg-zinc-900 px-6 py-3 text-sm font-medium text-white visited:text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:visited:text-zinc-900 dark:hover:bg-zinc-200"
         >
           {t.landing.cta}
         </Link>
