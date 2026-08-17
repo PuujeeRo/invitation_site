@@ -8,6 +8,7 @@ import type { CreateInvoiceParams, CreateInvoiceResult, PaymentProvider } from "
 // code path (see api/payments/mock/confirm) gets real coverage in dev.
 export class MockPaymentProvider implements PaymentProvider {
   name = "mock" as const;
+  readonly currency = "MNT";
 
   async createInvoice({ paymentId }: CreateInvoiceParams): Promise<CreateInvoiceResult> {
     return {

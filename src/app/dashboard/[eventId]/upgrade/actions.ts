@@ -23,17 +23,26 @@ export async function startCheckout(eventId: string) {
     redirect(`/dashboard/${eventId}`);
   }
 
+  // Resolved before the insert so the payment row records which provider and
+  // currency it was actually created for, rather than relying on a column
+  // default that may not match.
+  const provider = getPaymentProvider();
+
   const { data: payment, error } = await supabase
     .from("payments")
-    .insert({ event_id: eventId, amount: PAID_PRICE_MNT, status: "pending" })
+    .insert({
+      event_id: eventId,
+      amount: PAID_PRICE_MNT,
+      currency: provider.currency,
+      provider: provider.name,
+      status: "pending",
+    })
     .select("id")
     .single();
 
   if (error || !payment) {
     redirect(`/dashboard/${eventId}/upgrade?error=1`);
   }
-
-  const provider = getPaymentProvider();
 
   // Keep the redirect() calls out of this try block: Next.js implements
   // redirect() by throwing, and catching broadly here would swallow that throw
@@ -48,10 +57,9 @@ export async function startCheckout(eventId: string) {
     });
     checkoutUrl = invoice.checkoutUrl;
 
-    const providerColumn = provider.name === "qpay" ? { provider: "qpay" as const } : {};
     await supabase
       .from("payments")
-      .update({ provider_ref: invoice.providerRef, ...providerColumn })
+      .update({ provider_ref: invoice.providerRef })
       .eq("id", payment.id);
   } catch {
     await supabase.from("payments").update({ status: "failed" }).eq("id", payment.id);

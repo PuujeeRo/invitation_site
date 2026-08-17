@@ -48,6 +48,7 @@ async function getAccessToken(): Promise<string> {
 
 export class QPayProvider implements PaymentProvider {
   name = "qpay" as const;
+  readonly currency = "MNT";
 
   async createInvoice({ paymentId, amount, description }: CreateInvoiceParams): Promise<CreateInvoiceResult> {
     const token = await getAccessToken();

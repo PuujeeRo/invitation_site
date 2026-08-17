@@ -52,6 +52,48 @@ npm run build   # production build (also type-checks)
 npm run lint    # eslint
 ```
 
+## Payments
+
+Providers sit behind one interface (`src/lib/payments/`), selected by
+`PAYMENT_PROVIDER` (`qpay` | `stripe` | `mock`) or auto-detected from whichever
+credentials are present. With none set, the mock provider drives a local
+checkout page so the whole flow works in dev.
+
+| Provider | Notes |
+|---|---|
+| `qpay` | Primary, MNT. Callback is unauthenticated, so `/api/payments/qpay/webhook` re-checks the real status via QPay's API before marking anything paid. Not yet tested against a live merchant account. |
+| `stripe` | Structure only, no account yet. Checkout Session + signature-verified webhook at `/api/payments/stripe/webhook`. |
+| `mock` | Dev default. Exercises the real create → pay → confirm path via `/pay/mock/[paymentId]`. |
+
+A pinned provider whose credentials are missing throws rather than falling back
+to `mock` — a misconfigured deploy must fail loudly, not quietly give away free
+upgrades.
+
+```bash
+npx tsx scripts/verify-payments.ts   # currency conversion + provider selection
+```
+
+### Before using Stripe, check these
+
+Stripe is wired up but **is not usable for the 999₮ per-event price**, for
+reasons that are commercial rather than technical:
+
+- **999₮ is below Stripe's minimum charge.** ~999₮ is roughly USD 0.28, under
+  Stripe's ~USD 0.50 minimum, so the charge would be rejected outright.
+- **Fees would exceed the payment.** At roughly 2.9% + USD 0.30, the fee alone
+  is larger than the whole 999₮.
+- **Mongolia is not a supported Stripe country.** Stripe accounts require a
+  business in one of its supported countries, which does not include Mongolia —
+  using it means incorporating elsewhere.
+- **MNT as a Stripe presentment currency is unverified.** `STRIPE_CURRENCY`
+  defaults to `MNT`, but confirm Stripe actually supports it for your account
+  before relying on it; otherwise set a supported currency.
+
+Where Stripe *does* fit: the Phase 2 **49,000₮/year business plan** in the
+[product plan](docs/Naashir_Product_Plan_v1.md) (~USD 14, comfortably above the
+minimum), or taking international card payments. QPay/SocialPay remain the right
+rails for the core 999₮ Mongolian flow.
+
 ## Brand assets
 
 | Asset | Use |

@@ -9,7 +9,7 @@
 
 export type EventType = "birthday" | "wedding" | "kids_first_birthday" | "graduation" | "other";
 export type RsvpStatus = "yes" | "no" | "maybe";
-export type PaymentProvider = "qpay" | "socialpay";
+export type PaymentProvider = "qpay" | "socialpay" | "stripe" | "mock";
 export type PaymentStatus = "pending" | "paid" | "failed";
 
 export type Profile = {
@@ -68,6 +68,7 @@ export type PaymentRow = {
   id: string;
   event_id: string;
   amount: number;
+  currency: string;
   provider: PaymentProvider;
   status: PaymentStatus;
   provider_ref: string | null;
