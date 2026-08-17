@@ -86,6 +86,10 @@ create table public.rsvps (
   id uuid primary key default gen_random_uuid(),
   event_id uuid not null references public.events (id) on delete cascade,
   device_guest_id text not null,
+  -- Set only when the guest opened a personalized (?to=token) link, so the
+  -- dashboard can show "who hasn't answered yet" for the named guest list.
+  -- Generic-link responses stay null and are counted in the aggregate totals only.
+  named_guest_id uuid references public.named_guests (id) on delete set null,
   display_name text,
   status rsvp_status not null,
   party_size int not null default 1 check (party_size >= 1),
@@ -95,6 +99,7 @@ create table public.rsvps (
 );
 
 create index rsvps_event_id_idx on public.rsvps (event_id);
+create index rsvps_named_guest_id_idx on public.rsvps (named_guest_id);
 
 create function public.touch_updated_at()
 returns trigger
