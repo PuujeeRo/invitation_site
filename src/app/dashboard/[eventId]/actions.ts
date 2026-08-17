@@ -2,6 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getEmailProvider } from "@/lib/email";
+import { buildInviteEmail } from "@/lib/email/invite-template";
+import { invitationUrl } from "@/lib/site-url";
+import { FREE_EMAIL_SEND_LIMIT } from "@/lib/event-types";
 
 export type AddGuestError = "missing_event" | "required" | "generic";
 
@@ -41,4 +45,76 @@ export async function addNamedGuest(
 
   revalidatePath(`/dashboard/${eventId}`);
   return {};
+}
+
+export type SendGuestEmailError = "not_found" | "no_email" | "limit_reached" | "generic";
+
+export interface SendGuestEmailState {
+  error?: SendGuestEmailError;
+  sentGuestId?: string;
+}
+
+export async function sendGuestEmail(
+  _prevState: SendGuestEmailState,
+  formData: FormData
+): Promise<SendGuestEmailState> {
+  const eventId = String(formData.get("event_id") ?? "");
+  const guestId = String(formData.get("guest_id") ?? "");
+
+  const supabase = await createClient();
+
+  // RLS scopes both reads to the caller's own event/guests -- a stranger
+  // passing another organizer's ids just gets nulls below, not their data.
+  const { data: event } = await supabase
+    .from("events")
+    .select("id, name, event_type, event_date, event_time, location, slug, is_paid")
+    .eq("id", eventId)
+    .maybeSingle();
+  const { data: guest } = await supabase
+    .from("named_guests")
+    .select("*")
+    .eq("id", guestId)
+    .eq("event_id", eventId)
+    .maybeSingle();
+
+  if (!event || !guest) {
+    return { error: "not_found" };
+  }
+  if (!guest.email) {
+    return { error: "no_email" };
+  }
+
+  if (!event.is_paid) {
+    const { count } = await supabase
+      .from("named_guests")
+      .select("id", { count: "exact", head: true })
+      .eq("event_id", eventId)
+      .not("email_sent_at", "is", null);
+
+    if ((count ?? 0) >= FREE_EMAIL_SEND_LIMIT) {
+      return { error: "limit_reached" };
+    }
+  }
+
+  const { subject, html, text } = buildInviteEmail({
+    event,
+    guestFirstName: guest.first_name,
+    guestLastName: guest.last_name,
+    link: invitationUrl(event.slug, guest.guest_token),
+  });
+
+  const provider = getEmailProvider();
+  const result = await provider.send({ to: guest.email, subject, html, text });
+
+  if (!result.ok) {
+    return { error: "generic" };
+  }
+
+  await supabase
+    .from("named_guests")
+    .update({ email_sent_at: new Date().toISOString() })
+    .eq("id", guestId);
+
+  revalidatePath(`/dashboard/${eventId}`);
+  return { sentGuestId: guestId };
 }

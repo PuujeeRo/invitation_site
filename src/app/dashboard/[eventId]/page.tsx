@@ -8,6 +8,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { CopyLinkButton } from "@/components/share/CopyLinkButton";
 import { MessengerShareButton } from "@/components/share/MessengerShareButton";
 import { AddGuestForm } from "./AddGuestForm";
+import { SendEmailButton } from "./SendEmailButton";
 import type { EventRow, NamedGuestRow } from "@/lib/supabase/types";
 
 export default async function EventOverviewPage({
@@ -105,13 +106,20 @@ export default async function EventOverviewPage({
             {namedGuests.map((guest) => {
               const guestLink = invitationUrl(event.slug, guest.guest_token);
               return (
-                <li key={guest.id} className="flex items-center justify-between gap-3 py-3">
+                <li key={guest.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                   <span className="text-sm text-zinc-800 dark:text-zinc-200">
                     {guest.first_name} {guest.last_name}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <CopyLinkButton url={guestLink} label={t.eventOverview.guestLinkCopy} />
                     <MessengerShareButton url={guestLink} title={event.name} />
+                    {guest.email && (
+                      <SendEmailButton
+                        eventId={event.id}
+                        guestId={guest.id}
+                        alreadySent={Boolean(guest.email_sent_at)}
+                      />
+                    )}
                   </div>
                 </li>
               );
