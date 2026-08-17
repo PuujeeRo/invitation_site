@@ -2,16 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { getOrCreateGuestDeviceId } from "@/lib/guest-device-id";
+import { useI18n } from "@/i18n/I18nProvider";
 import type { RsvpStatus } from "@/lib/supabase/types";
 
 type LoadState = "loading" | "ready";
 type SubmitState = "idle" | "submitting" | "success" | "limit_reached" | "expired" | "error";
-
-const STATUS_OPTIONS: { value: RsvpStatus; label: string }[] = [
-  { value: "yes", label: "Ирнэ ✅" },
-  { value: "no", label: "Ирэхгүй ❌" },
-  { value: "maybe", label: "Магадгүй 🤔" },
-];
 
 export function RsvpWidget({
   eventId,
@@ -24,6 +19,12 @@ export function RsvpWidget({
   guestLastName?: string | null;
   guestToken?: string | null;
 }) {
+  const { dict: t } = useI18n();
+  const STATUS_OPTIONS: { value: RsvpStatus; label: string }[] = [
+    { value: "yes", label: t.rsvp.yes },
+    { value: "no", label: t.rsvp.no },
+    { value: "maybe", label: t.rsvp.maybe },
+  ];
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [status, setStatus] = useState<RsvpStatus | null>(null);
@@ -94,20 +95,16 @@ export function RsvpWidget({
   if (loadState === "loading") return null;
 
   if (submitState === "limit_reached") {
-    return (
-      <RsvpMessage>
-        This invitation reached its free guest limit. Ask the organizer to upgrade.
-      </RsvpMessage>
-    );
+    return <RsvpMessage>{t.rsvp.limitReached}</RsvpMessage>;
   }
 
   if (submitState === "expired") {
-    return <RsvpMessage>This invitation is no longer accepting responses.</RsvpMessage>;
+    return <RsvpMessage>{t.rsvp.expired}</RsvpMessage>;
   }
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Ирэх эсэхээ мэдэгдэнэ үү</p>
+      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{t.rsvp.prompt}</p>
 
       <div className="mt-3 grid grid-cols-3 gap-2">
         {STATUS_OPTIONS.map((opt) => (
@@ -129,7 +126,7 @@ export function RsvpWidget({
 
       {status === "yes" && (
         <label className="mt-4 flex items-center justify-between text-sm text-zinc-700 dark:text-zinc-300">
-          Хэдэн хүн ирэх вэ?
+          {t.rsvp.partySize}
           <input
             type="number"
             min={1}
@@ -147,7 +144,7 @@ export function RsvpWidget({
 
       {!guestFirstName && (
         <label className="mt-4 flex flex-col gap-1 text-sm text-zinc-700 dark:text-zinc-300">
-          Таны нэр (заавал биш)
+          {t.rsvp.nameLabel}
           <input
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
@@ -158,12 +155,10 @@ export function RsvpWidget({
       )}
 
       {submitState === "success" && status && (
-        <p className="mt-3 text-xs text-emerald-600 dark:text-emerald-400">Хариу илгээгдлээ ✅</p>
+        <p className="mt-3 text-xs text-emerald-600 dark:text-emerald-400">{t.rsvp.submitted}</p>
       )}
       {submitState === "error" && (
-        <p className="mt-3 text-xs text-red-600 dark:text-red-400">
-          Something went wrong. Please try again.
-        </p>
+        <p className="mt-3 text-xs text-red-600 dark:text-red-400">{t.rsvp.errorGeneric}</p>
       )}
     </div>
   );

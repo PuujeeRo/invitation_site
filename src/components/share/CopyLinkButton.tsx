@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/i18n/I18nProvider";
 
-export function CopyLinkButton({ url, label = "Хуулах" }: { url: string; label?: string }) {
+export function CopyLinkButton({ url, label }: { url: string; label?: string }) {
+  const { dict: t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -21,7 +23,7 @@ export function CopyLinkButton({ url, label = "Хуулах" }: { url: string; l
       onClick={handleCopy}
       className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-300"
     >
-      {copied ? "Хуулагдлаа ✅" : label}
+      {copied ? t.eventOverview.copied : (label ?? t.eventOverview.copy)}
     </button>
   );
 }

@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function LoginForm() {
+  const { dict: t } = useI18n();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export function LoginForm() {
   if (status === "sent") {
     return (
       <p className="mt-6 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
-        Check your inbox — we sent a sign-in link to <strong>{email}</strong>.
+        {t.login.checkInbox} <strong>{email}</strong>
       </p>
     );
   }
@@ -59,7 +61,7 @@ export function LoginForm() {
         disabled={status === "sending"}
         className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
-        {status === "sending" ? "Sending link…" : "Send magic link"}
+        {status === "sending" ? t.login.sending : t.login.send}
       </button>
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
     </form>

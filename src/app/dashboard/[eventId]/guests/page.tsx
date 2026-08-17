@@ -1,13 +1,9 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { freeGuestLimitFor } from "@/lib/event-types";
+import { getLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/dictionaries";
 import type { EventRow, NamedGuestRow, RsvpRow } from "@/lib/supabase/types";
-
-const STATUS_LABEL: Record<RsvpRow["status"], string> = {
-  yes: "Ирнэ",
-  no: "Ирэхгүй",
-  maybe: "Магадгүй",
-};
 
 export default async function GuestsPage({ params }: { params: Promise<{ eventId: string }> }) {
   const { eventId } = await params;
@@ -41,31 +37,40 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
     .reduce((sum, r) => sum + r.party_size, 0);
 
   const limit = event.is_paid ? null : freeGuestLimitFor(event.event_type);
+  const locale = await getLocale();
+  const t = getDictionary(locale);
+  const statusLabel: Record<RsvpRow["status"], string> = {
+    yes: t.guests.going,
+    no: t.guests.notGoing,
+    maybe: t.guests.maybe,
+  };
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
-      <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{event.name} — Responses</h1>
+      <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+        {event.name} — {t.guests.titleSuffix}
+      </h1>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile label="Ирнэ" value={going} />
-        <StatTile label="Ирэхгүй" value={notGoing} />
-        <StatTile label="Магадгүй" value={maybe} />
-        <StatTile label="Хариугүй" value={namedGuests.length > 0 ? noAnswer : "—"} />
+        <StatTile label={t.guests.going} value={going} />
+        <StatTile label={t.guests.notGoing} value={notGoing} />
+        <StatTile label={t.guests.maybe} value={maybe} />
+        <StatTile label={t.guests.noAnswer} value={namedGuests.length > 0 ? noAnswer : "—"} />
       </div>
 
       <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-        Нийт ирэх хүний тоо: <strong>{totalPeopleAttending}</strong>
+        {t.guests.totalAttending}: <strong>{totalPeopleAttending}</strong>
         {limit && (
           <>
             {" "}
-            · {rsvps.length}/{limit} guest slots used (free plan)
+            · {rsvps.length}/{limit} {t.guests.guestSlotsUsed}
           </>
         )}
       </p>
 
       {namedGuests.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Named guests</h2>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{t.guests.namedGuests}</h2>
           <ul className="mt-3 divide-y divide-zinc-200 dark:divide-zinc-800">
             {namedGuests.map((guest) => {
               const rsvp = rsvpByNamedGuestId.get(guest.id);
@@ -75,7 +80,9 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
                     {guest.first_name} {guest.last_name}
                   </span>
                   <span className="text-zinc-500">
-                    {rsvp ? `${STATUS_LABEL[rsvp.status]}${rsvp.status === "yes" ? ` · ${rsvp.party_size}` : ""}` : "Хариугүй"}
+                    {rsvp
+                      ? `${statusLabel[rsvp.status]}${rsvp.status === "yes" ? ` · ${rsvp.party_size}` : ""}`
+                      : t.guests.noAnswer}
                   </span>
                 </li>
               );
@@ -86,17 +93,19 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
 
       <section className="mt-8">
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-          {namedGuests.length > 0 ? "Other responses" : "Responses"}
+          {namedGuests.length > 0 ? t.guests.otherResponses : t.guests.responses}
         </h2>
         {anonymousRsvps.length === 0 ? (
-          <p className="mt-2 text-sm text-zinc-500">No responses yet.</p>
+          <p className="mt-2 text-sm text-zinc-500">{t.guests.noResponsesYet}</p>
         ) : (
           <ul className="mt-3 divide-y divide-zinc-200 dark:divide-zinc-800">
             {anonymousRsvps.map((rsvp) => (
               <li key={rsvp.id} className="flex items-center justify-between py-3 text-sm">
-                <span className="text-zinc-800 dark:text-zinc-200">{rsvp.display_name || "Guest"}</span>
+                <span className="text-zinc-800 dark:text-zinc-200">
+                  {rsvp.display_name || t.guests.guestFallback}
+                </span>
                 <span className="text-zinc-500">
-                  {STATUS_LABEL[rsvp.status]}
+                  {statusLabel[rsvp.status]}
                   {rsvp.status === "yes" ? ` · ${rsvp.party_size}` : ""}
                 </span>
               </li>

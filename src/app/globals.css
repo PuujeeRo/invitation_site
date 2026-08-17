@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (instead of Tailwind v4's default media-query-only
+   `dark:`) so the toggle can override the system preference. The no-flash
+   script in layout.tsx sets/removes this class before first paint. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -12,11 +17,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {

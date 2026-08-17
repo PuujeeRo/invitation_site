@@ -2,6 +2,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { InvitationCard } from "@/components/templates/InvitationCard";
 import { RsvpWidget } from "@/components/rsvp/RsvpWidget";
 import { isPastIso } from "@/lib/time";
+import { getLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/dictionaries";
+import { TopControls } from "@/components/theme/TopControls";
 import type { EventRow, NamedGuestRow } from "@/lib/supabase/types";
 
 export default async function InvitePage({
@@ -13,6 +16,8 @@ export default async function InvitePage({
 }) {
   const { slug } = await params;
   const { to } = await searchParams;
+  const locale = await getLocale();
+  const t = getDictionary(locale);
 
   const supabase = createAdminClient();
   const { data: event } = await supabase
@@ -22,17 +27,12 @@ export default async function InvitePage({
     .maybeSingle<EventRow>();
 
   if (!event) {
-    return <CenteredMessage>This invitation link doesn&apos;t exist.</CenteredMessage>;
+    return <CenteredMessage>{t.invite.notFound}</CenteredMessage>;
   }
 
   const isExpired = !event.is_paid && isPastIso(event.expires_at);
   if (isExpired) {
-    return (
-      <CenteredMessage>
-        This invitation reached its 7-day free period and is no longer active. Ask the organizer to
-        upgrade for unlimited access.
-      </CenteredMessage>
-    );
+    return <CenteredMessage>{t.invite.expired}</CenteredMessage>;
   }
 
   let guest: NamedGuestRow | null = null;
@@ -47,28 +47,35 @@ export default async function InvitePage({
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-6 px-4 py-10">
-      <InvitationCard
-        eventName={event.name}
-        eventType={event.event_type}
-        eventDate={event.event_date}
-        eventTime={event.event_time}
-        location={event.location}
-        description={event.description}
-        photoUrl={event.photo_url}
-        templateId={event.template_id}
-        isPaid={event.is_paid}
-        guestFirstName={guest?.first_name}
-        guestLastName={guest?.last_name}
-        countdownEnabled={event.countdown_enabled}
-        mapLink={event.map_link}
-      />
-      <RsvpWidget
-        eventId={event.id}
-        guestFirstName={guest?.first_name}
-        guestLastName={guest?.last_name}
-        guestToken={guest?.guest_token}
-      />
+    <div className="flex flex-1 flex-col">
+      <header className="flex justify-end px-4 py-3">
+        <TopControls />
+      </header>
+      <div className="flex flex-1 flex-col items-center gap-6 px-4 pb-10">
+        <InvitationCard
+          eventName={event.name}
+          eventType={event.event_type}
+          eventDate={event.event_date}
+          eventTime={event.event_time}
+          location={event.location}
+          description={event.description}
+          photoUrl={event.photo_url}
+          templateId={event.template_id}
+          isPaid={event.is_paid}
+          guestFirstName={guest?.first_name}
+          guestLastName={guest?.last_name}
+          countdownEnabled={event.countdown_enabled}
+          mapLink={event.map_link}
+          mapLinkLabel={t.invite.viewMap}
+          watermarkText={t.invite.watermark}
+        />
+        <RsvpWidget
+          eventId={event.id}
+          guestFirstName={guest?.first_name}
+          guestLastName={guest?.last_name}
+          guestToken={guest?.guest_token}
+        />
+      </div>
     </div>
   );
 }

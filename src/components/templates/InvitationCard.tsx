@@ -19,6 +19,8 @@ export interface InvitationCardProps {
   guestLastName?: string | null;
   countdownEnabled?: boolean;
   mapLink?: string | null;
+  mapLinkLabel: string;
+  watermarkText: string;
 }
 
 export function InvitationCard({
@@ -35,6 +37,8 @@ export function InvitationCard({
   guestLastName,
   countdownEnabled,
   mapLink,
+  mapLinkLabel,
+  watermarkText,
 }: InvitationCardProps) {
   const template = getTemplate(templateId);
   const greeting = buildGreeting({ eventName, eventType, guestFirstName, guestLastName });
@@ -95,14 +99,14 @@ export function InvitationCard({
             rel="noopener noreferrer"
             className={`animate-fade-in-up mt-2 rounded-full border px-4 py-2 text-sm font-medium [animation-delay:700ms] ${template.accent} border-current`}
           >
-            Газрын зураг харах
+            {mapLinkLabel}
           </a>
         )}
       </div>
 
       {!isPaid && (
         <div className="absolute bottom-3 right-3 rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-          Naashir-аар үүсгэсэн
+          {watermarkText}
         </div>
       )}
     </div>

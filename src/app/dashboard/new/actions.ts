@@ -8,8 +8,10 @@ import { TEMPLATES } from "@/lib/templates";
 import { EVENT_TYPES } from "@/lib/event-types";
 import type { EventType } from "@/lib/supabase/types";
 
+export type CreateEventError = "choose_type" | "enter_name" | "choose_date" | "choose_template" | "generic" | "slug";
+
 export interface CreateEventState {
-  error?: string;
+  error?: CreateEventError;
 }
 
 const EVENT_TYPE_IDS = new Set(EVENT_TYPES.map((t) => t.id));
@@ -41,16 +43,16 @@ export async function createEvent(
   const photo = formData.get("photo");
 
   if (!EVENT_TYPE_IDS.has(eventType as EventType)) {
-    return { error: "Please choose an event type." };
+    return { error: "choose_type" };
   }
   if (!name) {
-    return { error: "Please enter a name for the invitation." };
+    return { error: "enter_name" };
   }
   if (!eventDate) {
-    return { error: "Please choose a date." };
+    return { error: "choose_date" };
   }
   if (!TEMPLATE_IDS.has(templateId)) {
-    return { error: "Please choose a template." };
+    return { error: "choose_template" };
   }
 
   let insertedId: string | null = null;
@@ -82,12 +84,12 @@ export async function createEvent(
 
     // Only retry on a slug collision; anything else is a real failure.
     if (error && (error as { code?: string }).code !== POSTGRES_UNIQUE_VIOLATION) {
-      return { error: "Something went wrong creating your invitation. Please try again." };
+      return { error: "generic" };
     }
   }
 
   if (!insertedId || !insertedSlug) {
-    return { error: "Could not generate a unique link. Please try again." };
+    return { error: "slug" };
   }
 
   if (photo instanceof File && photo.size > 0) {

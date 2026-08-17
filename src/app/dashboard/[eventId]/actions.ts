@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+export type AddGuestError = "missing_event" | "required" | "generic";
+
 export interface AddGuestState {
-  error?: string;
+  error?: AddGuestError;
 }
 
 export async function addNamedGuest(
@@ -17,10 +19,10 @@ export async function addNamedGuest(
   const email = String(formData.get("email") ?? "").trim();
 
   if (!eventId) {
-    return { error: "Missing event." };
+    return { error: "missing_event" };
   }
   if (!firstName) {
-    return { error: "Please enter the guest's first name." };
+    return { error: "required" };
   }
 
   const supabase = await createClient();
@@ -34,7 +36,7 @@ export async function addNamedGuest(
   });
 
   if (error) {
-    return { error: "Could not add guest. Please try again." };
+    return { error: "generic" };
   }
 
   revalidatePath(`/dashboard/${eventId}`);

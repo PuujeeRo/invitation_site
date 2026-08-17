@@ -3,17 +3,28 @@
 import { useActionState } from "react";
 import { EVENT_TYPES } from "@/lib/event-types";
 import { TEMPLATES } from "@/lib/templates";
+import { useI18n } from "@/i18n/I18nProvider";
 import { createEvent, type CreateEventState } from "./actions";
 
 const initialState: CreateEventState = {};
 
+const ERROR_KEY = {
+  choose_type: "errorChooseType",
+  enter_name: "errorEnterName",
+  choose_date: "errorChooseDate",
+  choose_template: "errorChooseTemplate",
+  generic: "errorGeneric",
+  slug: "errorSlug",
+} as const;
+
 export function NewEventForm() {
+  const { dict: t } = useI18n();
   const [state, formAction, isPending] = useActionState(createEvent, initialState);
 
   return (
     <form action={formAction} className="flex flex-col gap-10">
       <section>
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">1. Event type</h2>
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{t.newEvent.stepType}</h2>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {EVENT_TYPES.map((type, i) => (
             <label
@@ -35,33 +46,33 @@ export function NewEventForm() {
       </section>
 
       <section>
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">2. Details</h2>
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{t.newEvent.stepDetails}</h2>
         <div className="mt-3 flex flex-col gap-3">
-          <Field label="Name (e.g. Bat & Dorj, or Bat-Erdene's Birthday)">
+          <Field label={t.newEvent.nameLabel}>
             <input name="name" required maxLength={80} className={inputClass} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Date">
+            <Field label={t.newEvent.dateLabel}>
               <input type="date" name="event_date" required className={inputClass} />
             </Field>
-            <Field label="Time">
+            <Field label={t.newEvent.timeLabel}>
               <input type="time" name="event_time" className={inputClass} />
             </Field>
           </div>
-          <Field label="Location">
+          <Field label={t.newEvent.locationLabel}>
             <input name="location" maxLength={140} className={inputClass} />
           </Field>
-          <Field label="Short description">
+          <Field label={t.newEvent.descriptionLabel}>
             <textarea name="description" maxLength={400} rows={3} className={inputClass} />
           </Field>
-          <Field label="Photo">
+          <Field label={t.newEvent.photoLabel}>
             <input type="file" name="photo" accept="image/*" className="text-sm" />
           </Field>
         </div>
       </section>
 
       <section>
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">3. Template</h2>
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{t.newEvent.stepTemplate}</h2>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {TEMPLATES.map((template, i) => (
             <label
@@ -87,7 +98,7 @@ export function NewEventForm() {
 
       {state.error && (
         <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
-          {state.error}
+          {t.newEvent[ERROR_KEY[state.error]]}
         </p>
       )}
 
@@ -96,7 +107,7 @@ export function NewEventForm() {
         disabled={isPending}
         className="self-start rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
-        {isPending ? "Creating…" : "Create invitation"}
+        {isPending ? t.newEvent.submitting : t.newEvent.submit}
       </button>
     </form>
   );

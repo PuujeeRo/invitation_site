@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export function MessengerShareButton({ url, title }: { url: string; title: string }) {
+  const { dict: t } = useI18n();
   const [copiedFallback, setCopiedFallback] = useState(false);
 
   async function handleShare() {
@@ -33,7 +35,7 @@ export function MessengerShareButton({ url, title }: { url: string; title: strin
       onClick={handleShare}
       className="rounded-lg bg-[#0084FF] px-4 py-2 text-sm font-medium text-white hover:bg-[#006fd6]"
     >
-      {copiedFallback ? "Line copied — paste into Messenger" : "Messenger-ээр илгээх"}
+      {copiedFallback ? t.eventOverview.messengerCopied : t.eventOverview.messengerShare}
     </button>
   );
 }

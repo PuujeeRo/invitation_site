@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { invitationUrl } from "@/lib/site-url";
 import { daysRemaining } from "@/lib/time";
+import { getLocale } from "@/i18n/get-locale";
+import { getDictionary } from "@/i18n/dictionaries";
 import { CopyLinkButton } from "@/components/share/CopyLinkButton";
 import { MessengerShareButton } from "@/components/share/MessengerShareButton";
 import { AddGuestForm } from "./AddGuestForm";
@@ -33,6 +35,15 @@ export default async function EventOverviewPage({
   const namedGuests = (guests ?? []) as NamedGuestRow[];
   const link = invitationUrl(event.slug);
   const daysLeft = daysRemaining(event.expires_at);
+  const locale = await getLocale();
+  const t = getDictionary(locale);
+
+  const freeStatusLabel =
+    daysLeft > 1
+      ? t.eventOverview.freeDaysLeft.replace("{days}", String(daysLeft))
+      : daysLeft === 1
+        ? t.eventOverview.freeDayLeft
+        : t.eventOverview.freeExpired;
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
@@ -42,26 +53,24 @@ export default async function EventOverviewPage({
           href={`/dashboard/${event.id}/guests`}
           className="text-sm font-medium underline underline-offset-4"
         >
-          View responses
+          {t.eventOverview.viewResponses}
         </Link>
       </div>
 
       {!event.is_paid && (
         <div className="mt-4 flex items-center justify-between rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-          <span>
-            {daysLeft > 0 ? `Free plan · ${daysLeft} day${daysLeft === 1 ? "" : "s"} left` : "Free plan expired"}
-          </span>
+          <span>{freeStatusLabel}</span>
           <Link
             href={`/dashboard/${event.id}/upgrade`}
             className="font-medium underline underline-offset-4"
           >
-            Upgrade for 999₮
+            {t.eventOverview.upgrade}
           </Link>
         </div>
       )}
 
       <section className="mt-8 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Invitation link</p>
+        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">{t.eventOverview.linkLabel}</p>
         <div className="mt-2 flex items-center gap-2">
           <code className="flex-1 truncate rounded-lg bg-zinc-100 px-3 py-2 text-xs dark:bg-zinc-800">
             {link}
@@ -75,11 +84,9 @@ export default async function EventOverviewPage({
 
       <section className="mt-8">
         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-          Personalize for a guest (optional)
+          {t.eventOverview.personalizeTitle}
         </p>
-        <p className="mt-1 text-xs text-zinc-500">
-          Add a guest to get their own link with a personal greeting.
-        </p>
+        <p className="mt-1 text-xs text-zinc-500">{t.eventOverview.personalizeSubtitle}</p>
         <div className="mt-3">
           <AddGuestForm eventId={event.id} />
         </div>
@@ -94,7 +101,7 @@ export default async function EventOverviewPage({
                     {guest.first_name} {guest.last_name}
                   </span>
                   <div className="flex items-center gap-2">
-                    <CopyLinkButton url={guestLink} label="Link хуулах" />
+                    <CopyLinkButton url={guestLink} label={t.eventOverview.guestLinkCopy} />
                     <MessengerShareButton url={guestLink} title={event.name} />
                   </div>
                 </li>
