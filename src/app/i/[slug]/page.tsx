@@ -6,6 +6,7 @@ import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { TopControls } from "@/components/theme/TopControls";
 import { readTheme, readCustomText } from "@/lib/theme";
+import { FreeInviteAdSlot } from "@/components/ads/FreeInviteAdSlot";
 import type { EventRow, NamedGuestRow } from "@/lib/supabase/types";
 
 export default async function InvitePage({
@@ -79,6 +80,7 @@ export default async function InvitePage({
           guestLastName={guest?.last_name}
           guestToken={guest?.guest_token}
         />
+        {!event.is_paid && <FreeInviteAdSlot />}
       </div>
     </div>
   );
