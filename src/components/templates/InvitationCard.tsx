@@ -3,6 +3,7 @@ import { getTemplate } from "@/lib/templates";
 import { buildGreeting } from "@/lib/greeting";
 import { formatEventDate } from "@/lib/format";
 import type { EventType } from "@/lib/supabase/types";
+import type { EventTheme, EventCustomText } from "@/lib/theme";
 import { CountdownTimer } from "./CountdownTimer";
 
 export interface InvitationCardProps {
@@ -21,6 +22,9 @@ export interface InvitationCardProps {
   mapLink?: string | null;
   mapLinkLabel: string;
   watermarkText: string;
+  videoUrl?: string | null;
+  theme?: EventTheme;
+  customText?: EventCustomText;
 }
 
 export function InvitationCard({
@@ -39,9 +43,21 @@ export function InvitationCard({
   mapLink,
   mapLinkLabel,
   watermarkText,
+  videoUrl,
+  theme,
+  customText,
 }: InvitationCardProps) {
   const template = getTemplate(templateId);
-  const greeting = buildGreeting({ eventName, eventType, guestFirstName, guestLastName });
+  const greeting =
+    (isPaid && customText?.greetingOverride) ||
+    buildGreeting({ eventName, eventType, guestFirstName, guestLastName });
+
+  // Paid-only accent color override: arbitrary user hex can't be a static
+  // Tailwind class (nothing to scan at build time), so it's an inline style
+  // that wins over the template's default accent class.
+  const accentStyle = isPaid && theme?.accentColor ? { color: theme.accentColor } : undefined;
+  const accentBorderStyle =
+    isPaid && theme?.accentColor ? { color: theme.accentColor, borderColor: theme.accentColor } : undefined;
 
   return (
     <div
@@ -53,9 +69,12 @@ export function InvitationCard({
         </div>
       )}
 
+      {isPaid && videoUrl && <video src={videoUrl} controls className="w-full animate-fade-in-up" />}
+
       <div className="flex flex-col items-center gap-3 px-8 py-10 text-center">
         <p
-          className={`animate-fade-in-up text-sm font-medium [animation-delay:100ms] ${template.accent}`}
+          className={`animate-fade-in-up text-sm font-medium [animation-delay:100ms] ${accentStyle ? "" : template.accent}`}
+          style={accentStyle}
         >
           {greeting}
         </p>
@@ -97,7 +116,8 @@ export function InvitationCard({
             href={mapLink}
             target="_blank"
             rel="noopener noreferrer"
-            className={`animate-fade-in-up mt-2 rounded-full border px-4 py-2 text-sm font-medium [animation-delay:700ms] ${template.accent} border-current`}
+            className={`animate-fade-in-up mt-2 rounded-full border px-4 py-2 text-sm font-medium [animation-delay:700ms] ${accentStyle ? "" : `${template.accent} border-current`}`}
+            style={accentBorderStyle}
           >
             {mapLinkLabel}
           </a>

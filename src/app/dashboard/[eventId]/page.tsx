@@ -53,12 +53,17 @@ export default async function EventOverviewPage({
     <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{event.name}</h1>
-        <Link
-          href={`/dashboard/${event.id}/guests`}
-          className="text-sm font-medium underline underline-offset-4"
-        >
-          {t.eventOverview.viewResponses}
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href={`/dashboard/${event.id}/edit`} className="text-sm font-medium underline underline-offset-4">
+            {t.edit.title}
+          </Link>
+          <Link
+            href={`/dashboard/${event.id}/guests`}
+            className="text-sm font-medium underline underline-offset-4"
+          >
+            {t.eventOverview.viewResponses}
+          </Link>
+        </div>
       </div>
 
       {paid === "1" && event.is_paid && (

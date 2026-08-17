@@ -5,6 +5,7 @@ import { isPastIso } from "@/lib/time";
 import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { TopControls } from "@/components/theme/TopControls";
+import { readTheme, readCustomText } from "@/lib/theme";
 import type { EventRow, NamedGuestRow } from "@/lib/supabase/types";
 
 export default async function InvitePage({
@@ -68,6 +69,9 @@ export default async function InvitePage({
           mapLink={event.map_link}
           mapLinkLabel={t.invite.viewMap}
           watermarkText={t.invite.watermark}
+          videoUrl={event.video_url}
+          theme={readTheme(event.theme)}
+          customText={readCustomText(event.custom_text)}
         />
         <RsvpWidget
           eventId={event.id}
