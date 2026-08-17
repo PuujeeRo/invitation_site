@@ -52,6 +52,23 @@ npm run build   # production build (also type-checks)
 npm run lint    # eslint
 ```
 
+## Brand assets
+
+| Asset | Use |
+|---|---|
+| [`src/components/brand/Logo.tsx`](src/components/brand/Logo.tsx) | In-app logo. `LogoMark` (icon only) and `Logo` (icon + wordmark). Uses `currentColor`, so it adapts to light/dark automatically — prefer this inside the app. |
+| [`src/app/icon.svg`](src/app/icon.svg) | Favicon / app icon. Picked up automatically by the Next.js `app/icon.svg` convention. |
+| [`public/logo-mark.svg`](public/logo-mark.svg) | Standalone monoline mark for use outside the app (README, docs). Fixed colors. |
+| [`public/logo-tile.svg`](public/logo-tile.svg) | Solid gradient tile version, for where the logo needs its own background (social avatar, app icon). |
+
+The mark echoes the invitation card's own visual language (the flap fold and the
+four-point ornament), so brand and product read as one design. Rendered at
+16–64px in [docs/screenshots/logo-sizes.png](docs/screenshots/logo-sizes.png).
+
+> When editing an `.svg` by hand, never use a double hyphen as a dash inside an
+> XML comment — it is illegal in XML and silently breaks the entire file with a
+> parse error rather than just ignoring the comment.
+
 ## Design constraints
 
 Guests almost always open invitations on a phone, from a Messenger link — the

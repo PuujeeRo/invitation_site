@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!--
+    Standalone Naashir mark for use outside the app (README, social avatar,
+    print). Colors are explicit rather than currentColor so the file is
+    self-contained; inside the app use components/brand/Logo.tsx instead, which
+    inherits the current text color and adapts to dark mode.
+  -->
+  <g fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.5" y="9" width="22" height="16.5" rx="3.5" />
+    <path d="M5.2 11.2 L14.5 17.6 L23.8 11.2" />
+  </g>
+  <path
+    d="M27 2.3 Q27.8 4.7 30.2 5.5 Q27.8 6.3 27 8.7 Q26.2 6.3 23.8 5.5 Q26.2 4.7 27 2.3 Z"
+    fill="#f59e0b"
+  />
+</svg>
