@@ -51,3 +51,22 @@ npm run dev     # start dev server
 npm run build   # production build (also type-checks)
 npm run lint    # eslint
 ```
+
+## Design constraints
+
+Guests almost always open invitations on a phone, from a Messenger link — the
+public invitation page is mobile-first, and **280px (the Galaxy Fold's outer
+screen) is the narrowest supported width**. Layout changes should be checked
+there, not just at a comfortable phone size:
+
+```bash
+npm run dev -- -p 3002
+npm install --no-save playwright && npx playwright install chromium  # first run only
+node scripts/screenshots.js
+```
+
+That writes `docs/screenshots/` and **exits non-zero on any horizontal page
+overflow** or console error, at 280px / 390px / desktop. Current reference
+screenshots live in [docs/screenshots/](docs/screenshots/). `playwright` is
+deliberately not a project dependency — it would add a large browser download
+to every install for a tool only needed when checking layout.

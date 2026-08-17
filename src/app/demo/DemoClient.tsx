@@ -6,6 +6,7 @@ import { InvitationCard } from "@/components/templates/InvitationCard";
 import { DemoRsvpWidget } from "@/components/rsvp/DemoRsvpWidget";
 import { TEMPLATES } from "@/lib/templates";
 import { SAMPLE_EVENTS, demoPhotoDataUri, demoEventDate } from "@/lib/demo-data";
+import { countdownLabelsFrom } from "@/lib/countdown-labels";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export function DemoClient() {
@@ -24,12 +25,16 @@ export function DemoClient() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-4 pb-16">
-      <h1 className="mt-4 text-center text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{t.demo.title}</h1>
-      <p className="mt-2 max-w-md text-center text-sm text-zinc-600 dark:text-zinc-400">{t.demo.subtitle}</p>
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-3 pb-16 sm:px-4">
+      <h1 className="font-display mt-4 text-center text-2xl font-medium text-balance text-zinc-900 sm:text-3xl dark:text-zinc-50">
+        {t.demo.title}
+      </h1>
+      <p className="mt-2 max-w-md text-center text-sm text-pretty text-zinc-600 dark:text-zinc-400">
+        {t.demo.subtitle}
+      </p>
 
-      <div className="mt-8 flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-center">
-        <div className="flex flex-col items-center gap-6">
+      <div className="mt-6 flex w-full flex-col items-center gap-6 sm:mt-8 lg:flex-row lg:items-start lg:justify-center">
+        <div className="flex w-full max-w-md flex-col items-center gap-4 sm:gap-6">
           <InvitationCard
             eventName={sample.name}
             eventType={sample.eventType}
@@ -45,20 +50,21 @@ export function DemoClient() {
             mapLinkLabel={t.invite.viewMap}
             watermarkText={t.invite.watermark}
             theme={paidPreview ? { accentColor: sample.photoColors[1] } : undefined}
+            countdownLabels={countdownLabelsFrom(t)}
           />
           <DemoRsvpWidget />
         </div>
 
-        <div className="flex w-full max-w-xs flex-col gap-6">
+        <div className="flex w-full max-w-md flex-col gap-6 lg:max-w-xs">
           <div>
             <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{t.demo.sampleEventLabel}</p>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
               {SAMPLE_EVENTS.map((s) => (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => selectSample(s.id)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`rounded-full border px-2.5 py-1.5 text-[11px] font-medium transition-colors sm:px-3 sm:text-xs ${
                     s.id === sampleId
                       ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-50 dark:bg-zinc-50 dark:text-zinc-900"
                       : "border-zinc-300 text-zinc-700 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-300"

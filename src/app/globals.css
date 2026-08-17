@@ -13,8 +13,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans-custom);
+  --font-display: var(--font-display-custom);
 }
 
 .dark {
@@ -25,22 +25,24 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans-custom), system-ui, sans-serif;
 }
+
+/* ---------- animations ---------- */
 
 @keyframes naashir-fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .animate-fade-in-up {
-  animation: naashir-fade-in-up 0.6s ease-out both;
+  animation: naashir-fade-in-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes naashir-float {
@@ -57,6 +59,21 @@ body {
   animation: naashir-float 5s ease-in-out infinite;
 }
 
+/* Gentler float for decorative card elements that shouldn't rotate. */
+@keyframes naashir-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-drift {
+  animation: naashir-drift 6s ease-in-out infinite;
+}
+
 @keyframes naashir-twinkle {
   0%,
   100% {
@@ -71,3 +88,34 @@ body {
   animation: naashir-twinkle 2.4s ease-in-out infinite;
 }
 
+/* Slow sheen across the invitation card, like light moving over paper stock. */
+@keyframes naashir-sheen {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+.animate-sheen {
+  animation: naashir-sheen 7s ease-in-out 1.2s infinite;
+}
+
+/* Respect the OS "reduce motion" setting: decorative loops stop entirely, and
+   entrance animations resolve to their final state instead of being skipped
+   mid-way (which would leave elements faded out). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-drift,
+  .animate-twinkle,
+  .animate-sheen {
+    animation: none;
+  }
+
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

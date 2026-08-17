@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { I18nProvider } from "@/i18n/I18nProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Both fonts load the Cyrillic subset explicitly -- almost all real content
+// here is Mongolian Cyrillic, and a Latin-only font (the previous Geist) makes
+// the browser silently fall back to a system font for every Cyrillic glyph,
+// which is why headings looked inconsistent across machines.
+const sans = Inter({
+  variable: "--font-sans-custom",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// Serif display face for invitation headings -- the single biggest lever on
+// making an invitation feel like an invitation rather than a web form.
+const display = Playfair_Display({
+  variable: "--font-display-custom",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -40,7 +48,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sans.variable} ${display.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

@@ -2,6 +2,14 @@
 
 import { useEffect, useState } from "react";
 
+export interface CountdownLabels {
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
+  started: string;
+}
+
 function getRemaining(target: number) {
   const diff = Math.max(0, target - Date.now());
   return {
@@ -16,11 +24,15 @@ function getRemaining(target: number) {
 export function CountdownTimer({
   eventDate,
   eventTime,
+  labels,
   textClassName = "",
+  chipClassName = "",
 }: {
   eventDate: string;
   eventTime: string | null;
+  labels: CountdownLabels;
   textClassName?: string;
+  chipClassName?: string;
 }) {
   const target = new Date(`${eventDate}T${eventTime ?? "00:00"}`).getTime();
   const [remaining, setRemaining] = useState(() => getRemaining(target));
@@ -31,22 +43,35 @@ export function CountdownTimer({
   }, [target]);
 
   if (remaining.done) {
-    return <p className={`text-sm font-medium ${textClassName}`}>Эхэллээ 🎉</p>;
+    return <p className={`text-sm font-medium ${textClassName}`}>{labels.started}</p>;
   }
 
-  const units: [number, string][] = [
-    [remaining.days, "өдөр"],
-    [remaining.hours, "цаг"],
-    [remaining.minutes, "минут"],
-    [remaining.seconds, "секунд"],
+  const units: { value: number; label: string }[] = [
+    { value: remaining.days, label: labels.days },
+    { value: remaining.hours, label: labels.hours },
+    { value: remaining.minutes, label: labels.minutes },
+    { value: remaining.seconds, label: labels.seconds },
   ];
 
   return (
-    <div className={`flex items-baseline gap-3 text-sm font-medium ${textClassName}`}>
-      {units.map(([value, label]) => (
-        <span key={label}>
-          <span className="text-lg font-semibold">{value}</span> {label}
-        </span>
+    // Fixed 4-column grid rather than flex: keeps every chip equal width and
+    // never overflows, down to a 280px-wide Galaxy Fold screen.
+    <div className={`grid w-full grid-cols-4 gap-1 sm:gap-2 ${textClassName}`}>
+      {units.map((unit) => (
+        <div
+          key={unit.label}
+          className={`min-w-0 rounded-lg px-1 py-1.5 backdrop-blur-sm sm:rounded-xl sm:px-2 ${chipClassName}`}
+        >
+          {/* The remaining time is computed from the current clock, so the value
+              rendered during SSR is legitimately a second or two behind the one
+              the client computes at hydration. suppressHydrationWarning is the
+              intended escape hatch for exactly this; the interval corrects the
+              displayed value within a second either way. */}
+          <div className="text-base font-semibold tabular-nums sm:text-lg" suppressHydrationWarning>
+            {unit.value}
+          </div>
+          <div className="truncate text-[9px] tracking-wide opacity-70 sm:text-[10px]">{unit.label}</div>
+        </div>
       ))}
     </div>
   );
