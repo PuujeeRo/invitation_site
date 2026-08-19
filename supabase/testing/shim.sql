@@ -13,6 +13,22 @@ create extension if not exists pgcrypto;
 create schema if not exists auth;
 create schema if not exists storage;
 
+-- Supabase's built-in roles. The storage policies in 0002 are granted
+-- "to authenticated", so without these the migration cannot even be parsed.
+-- Roles are cluster-wide rather than per-database, so this is written to be
+-- safely re-runnable across repeated test runs.
+do $$
+declare
+  role_name text;
+begin
+  foreach role_name in array array['anon', 'authenticated', 'service_role'] loop
+    if not exists (select 1 from pg_roles where rolname = role_name) then
+      execute format('create role %I nologin noinherit', role_name);
+    end if;
+  end loop;
+end
+$$;
+
 -- Minimal stand-in for Supabase's auth.users (only the columns we depend on).
 create table if not exists auth.users (
   id uuid primary key default gen_random_uuid(),

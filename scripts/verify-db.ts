@@ -13,13 +13,29 @@
  * was previously never executed at all -- the migrations themselves, the
  * guest-limit trigger, the RSVP uniqueness rule, and the RLS policies.
  */
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { Client } from "pg";
 import { EVENT_TYPES, freeGuestLimitFor } from "@/lib/event-types";
 
 const TEST_DB = "naashir_test";
 const ROOT = process.cwd();
+
+// Load .env.test.local (git-ignored) so the script runs with no shell setup.
+// Deliberately tiny and dependency-free: plain KEY=value, and a value already
+// present in the real environment always wins.
+function loadEnvFile(path: string) {
+  if (!existsSync(path)) return;
+  for (const line of readFileSync(path, "utf8").split(/\r?\n/)) {
+    const match = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(line);
+    if (!match) continue;
+    const [, key, rawValue] = match;
+    if (process.env[key] === undefined) {
+      process.env[key] = rawValue.trim().replace(/^["']|["']$/g, "");
+    }
+  }
+}
+loadEnvFile(join(ROOT, ".env.test.local"));
 
 let failures = 0;
 function assert(label: string, ok: boolean, detail = "") {
@@ -179,13 +195,29 @@ async function main() {
 
   // ---- uniqueness + updated_at -------------------------------------------
   section("rsvp constraints");
+  // Uniqueness must be checked on an event that is NOT at its limit: the BEFORE
+  // INSERT limit trigger fires before the unique constraint is evaluated, so on a
+  // full event a duplicate device is rejected as guest_limit_reached and the
+  // constraint never gets a chance to speak.
+  const spareEvent = await newEvent(orgId, "birthday");
+  await rsvp(spareEvent, "dup-device");
   let dupBlocked = false;
   try {
-    await rsvp(fullEvent, "d-0");
+    await rsvp(spareEvent, "dup-device");
   } catch (e) {
     dupBlocked = String((e as Error).message).includes("duplicate key");
   }
   assert("(event_id, device_guest_id) is unique", dupBlocked);
+
+  // And the ordering above, asserted directly, since it is what makes the
+  // update-then-insert flow in api/rsvp necessary rather than merely tidy.
+  let limitWinsOnFullEvent = false;
+  try {
+    await rsvp(fullEvent, "d-0");
+  } catch (e) {
+    limitWinsOnFullEvent = isLimitError(e);
+  }
+  assert("on a full event the limit trigger fires before the unique constraint", limitWinsOnFullEvent);
 
   const touched = await db.query<{ changed: boolean }>(
     `select updated_at > created_at as changed from public.rsvps
@@ -210,29 +242,39 @@ async function main() {
   // Superusers bypass RLS, so this runs as a plain role, the way the app's
   // authenticated requests do.
   section("row level security");
-  await db.query(`drop role if exists naashir_test_auth`);
-  await db.query(`create role naashir_test_auth nologin`);
-  await db.query(`grant usage on schema public to naashir_test_auth`);
-  await db.query(
-    `grant select, insert, update, delete on all tables in schema public to naashir_test_auth`
-  );
-
   const otherOrg = await newOrganizer();
   const otherEvent = await newEvent(otherOrg, "wedding");
 
-  await db.query("begin");
-  await db.query(`set local role naashir_test_auth`);
-  await db.query(`select set_config('request.jwt.claim.sub', $1, true)`, [orgId]);
-  const visible = await db.query<{ id: string }>(`select id from public.events where id = $1`, [
-    otherEvent,
-  ]);
-  const own = await db.query<{ id: string }>(`select id from public.events where id = $1`, [
-    fullEvent,
-  ]);
-  await db.query("rollback");
+  try {
+    await db.query(`drop role if exists naashir_test_auth`);
+    await db.query(`create role naashir_test_auth nologin`);
+    await db.query(`grant usage on schema public to naashir_test_auth`);
+    await db.query(
+      `grant select, insert, update, delete on all tables in schema public to naashir_test_auth`
+    );
+    // PostgreSQL 16 no longer implies SET ROLE from CREATEROLE, so the grant has
+    // to ask for it explicitly or the impersonation below is refused.
+    await db.query(`grant naashir_test_auth to current_user with set true`);
 
-  assert("cannot read another organizer's event", visible.rowCount === 0);
-  assert("can read own event", own.rowCount === 1);
+    await db.query("begin");
+    await db.query(`set local role naashir_test_auth`);
+    await db.query(`select set_config('request.jwt.claim.sub', $1, true)`, [orgId]);
+    const visible = await db.query<{ id: string }>(`select id from public.events where id = $1`, [
+      otherEvent,
+    ]);
+    const own = await db.query<{ id: string }>(`select id from public.events where id = $1`, [
+      fullEvent,
+    ]);
+    await db.query("rollback");
+
+    assert("cannot read another organizer's event", visible.rowCount === 0);
+    assert("can read own event", own.rowCount === 1);
+  } catch (e) {
+    // Report rather than abort: RLS needs privileges the test role may not have,
+    // and that must not silently look like the security check having passed.
+    await db.query("rollback").catch(() => {});
+    assert("RLS policies enforced", false, `could not run: ${String((e as Error).message)}`);
+  }
 
   await db.end();
 

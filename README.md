@@ -52,6 +52,40 @@ npm run build   # production build (also type-checks)
 npm run lint    # eslint
 ```
 
+## Testing the database
+
+The migrations and the guest-counting rule are the parts with no UI to eyeball,
+so they are covered by a suite that runs against a local PostgreSQL:
+
+```bash
+cp .env.test.local.example .env.test.local   # set PGUSER / PGPASSWORD
+npx tsx scripts/verify-db.ts
+```
+
+It creates a throwaway `naashir_test` database (never touching any other
+database), applies `supabase/testing/shim.sql` plus every migration in order,
+and then asserts the behaviour the app depends on — most importantly that **the
+guest limit the app displays equals the limit the database enforces**, for every
+event type. That check is not decorative: the two had already drifted apart once
+for Kid's 1st Birthday, and reintroducing the drift makes the suite fail.
+
+The role it connects as needs `LOGIN`, `CREATEDB` (for the throwaway database)
+and `CREATEROLE` (for the temporary role used to exercise the RLS policies):
+
+```sql
+CREATE ROLE naashir_test WITH LOGIN PASSWORD '...' CREATEDB CREATEROLE;
+```
+
+`supabase/testing/shim.sql` is **test-only** and must never be applied to a real
+Supabase project. It creates the objects Supabase supplies and plain Postgres
+does not — `auth.users`, `auth.uid()`, the `storage` schema, and the `anon` /
+`authenticated` / `service_role` roles — so the real migrations run *unmodified*
+and are validated exactly as they will run in production.
+
+> This validates the schema, not the app. `supabase-js` talks to Supabase's REST
+> API rather than to Postgres directly, so running the app itself still requires
+> a real Supabase project.
+
 ## Payments
 
 Providers sit behind one interface (`src/lib/payments/`), selected by
