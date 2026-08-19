@@ -115,8 +115,8 @@ create trigger rsvps_touch_updated_at
   before update on public.rsvps
   for each row execute procedure public.touch_updated_at();
 
--- Enforce the free-plan guest limit at insert time (10 for small events, 100 for
--- big events; unlimited once the event is paid). Only blocks a *new* device_guest_id
+-- Enforce the free-plan guest limit at insert time (100 for wedding and graduation;
+-- 10 for birthday, kid's 1st birthday and other; unlimited once paid). Only blocks a *new* device_guest_id
 -- row -- existing devices updating their own answer go through UPDATE, not INSERT,
 -- so they are never blocked by this trigger. Fires for every role (RLS-independent).
 create function public.enforce_rsvp_limit()

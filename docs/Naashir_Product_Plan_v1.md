@@ -9,7 +9,7 @@ Naashir lets a user create an event invitation in a few clicks, share it as a li
 - Free, but invitation is active for **7 days** only
 - Watermark shown on the invitation
 - Free RSVP guest limit depends on event type:
-  - Small events (birthday, other) — **10 free guests**
+  - Small events (birthday, kid's 1st birthday, other) — **10 free guests**
   - Big events (wedding, graduation) — **100 free guests**
 
 *7 days is usually enough for people to RSVP before the event. This also pushes people who need it longer to upgrade.*
