@@ -35,12 +35,24 @@ create table if not exists auth.users (
   email text
 );
 
--- Supabase derives auth.uid() from the request JWT. Tests impersonate a user
--- with:  set local request.jwt.claim.sub = '<uuid>';
+-- Supabase derives auth.uid() from the request JWT. Matches Supabase's actual
+-- function, not a simplification: modern PostgREST sets one request.jwt.claims
+-- JSON GUC per request rather than a separate request.jwt.claim.<name> GUC per
+-- claim, so a real deployment never populates the bare request.jwt.claim.sub
+-- this checks first -- confirmed against a live PostgREST instance while
+-- building supabase/localdev, where relying on it alone left auth.uid() always
+-- NULL and every RLS check involving it silently failing closed. The coalesce
+-- keeps this test suite's `select set_config('request.jwt.claim.sub', ...)`
+-- impersonation working unchanged (see scripts/verify-db.ts) while also
+-- matching production's real GUC.
 create or replace function auth.uid() returns uuid
 language sql stable
 as $$
-  select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+  select
+    coalesce(
+      nullif(current_setting('request.jwt.claim.sub', true), ''),
+      (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')
+    )::uuid
 $$;
 
 create table if not exists storage.buckets (

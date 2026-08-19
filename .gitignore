@@ -42,3 +42,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local-dev-only PostgREST setup (binary, JWT secret, DB connection string
+# with password) -- never commit any of this, see supabase/localdev/README.md
+.localdev/
+
+# Local-dev-only: photos uploaded while LOCAL_DEV_MODE=true (see lib/storage.ts)
+/public/uploads/

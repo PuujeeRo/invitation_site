@@ -7,9 +7,16 @@ import { TopControls } from "@/components/theme/TopControls";
 import { Logo } from "@/components/brand/Logo";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { HeaderRow } from "@/components/layout/HeaderRow";
+import { isLocalDevMode } from "@/lib/supabase/local-dev";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage() {
+  // No GoTrue locally, so no real magic-link form to show -- see
+  // lib/supabase/local-dev.ts and app/dev-login for why.
+  if (isLocalDevMode()) {
+    redirect("/dev-login");
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

@@ -18,6 +18,8 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+**No hosted Supabase project yet?** See [supabase/localdev/README.md](supabase/localdev/README.md) — runs the whole app against your own local PostgreSQL with no Docker, using a natively-run PostgREST instead of a real Supabase project. Real RLS enforcement, not a shortcut; the one thing it can't do is real GoTrue (Supabase Auth has no Windows binary), so sign-in becomes a dev-only shortcut at `/dev-login` instead of magic-link email.
+
 ### Database
 
 Schema lives in `supabase/migrations/`. Apply it against your Supabase project (via the SQL editor, or `supabase db push` with the Supabase CLI once linked).
