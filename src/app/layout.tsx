@@ -54,7 +54,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }} />
       </head>
-      <body className="flex min-h-full flex-col bg-white text-zinc-900 dark:bg-black dark:text-zinc-50">
+      {/* Background/text color come from the body { background/color: var(...) }
+          rule in globals.css, not a hardcoded bg-white/dark:bg-black pair here --
+          one source of truth for the theme background instead of two values that
+          have to be kept in sync by hand. */}
+      <body className="flex min-h-full flex-col">
         <I18nProvider locale={locale} dict={dict}>
           {children}
         </I18nProvider>

@@ -4,12 +4,13 @@ import type { ReactNode } from "react";
 // must be a lookup table rather than an interpolated `max-w-${size}` -- a
 // template literal never produces a complete class name for the scanner to find,
 // and the corresponding CSS silently never gets generated.
-const MAX_WIDTH = {
+export const MAX_WIDTH = {
   sm: "max-w-sm", // ~384px -- single-column confirmation screens (upgrade, mock pay)
   md: "max-w-md", // ~448px -- login, narrow single-column forms
   lg: "max-w-2xl", // ~672px -- standard form screens (new event, edit, event overview)
   xl: "max-w-3xl", // ~768px -- content-dense screens (guest responses table)
   "2xl": "max-w-4xl", // ~896px -- list views (dashboard event list)
+  "3xl": "max-w-5xl", // ~1024px -- wide showcase sections (landing hero/features)
 } as const;
 
 export type PageMaxWidth = keyof typeof MAX_WIDTH;

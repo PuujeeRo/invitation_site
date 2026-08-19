@@ -5,6 +5,7 @@ import { isPastIso } from "@/lib/time";
 import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { TopControls } from "@/components/theme/TopControls";
+import { HeaderRow } from "@/components/layout/HeaderRow";
 import { readTheme, readCustomText } from "@/lib/theme";
 import { FreeInviteAdSlot } from "@/components/ads/FreeInviteAdSlot";
 import { countdownLabelsFrom } from "@/lib/countdown-labels";
@@ -51,8 +52,10 @@ export default async function InvitePage({
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="flex justify-end px-4 py-3">
-        <TopControls />
+      <header className="px-4 py-3">
+        <HeaderRow maxWidth="md" justify="end">
+          <TopControls />
+        </HeaderRow>
       </header>
       <div className="flex flex-1 flex-col items-center gap-4 px-3 pb-10 sm:gap-6 sm:px-4">
         <InvitationCard

@@ -18,7 +18,12 @@
 }
 
 .dark {
-  --background: #0a0a0a;
+  /* Softer than near-pure-black (#0a0a0a): still reads as dark mode, but
+     without the harsh, glaring contrast that a true near-black background
+     produces against light text. Stays darker than the zinc-900 (#18181b)
+     surfaces cards use throughout the app, so elevation/contrast between the
+     page and a card is still preserved. */
+  --background: #121214;
   --foreground: #ededed;
 }
 

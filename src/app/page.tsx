@@ -3,6 +3,7 @@ import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { TopControls } from "@/components/theme/TopControls";
 import { Logo } from "@/components/brand/Logo";
+import { HeaderRow } from "@/components/layout/HeaderRow";
 import { InvitationCard } from "@/components/templates/InvitationCard";
 import { countdownLabelsFrom } from "@/lib/countdown-labels";
 import { SAMPLE_EVENTS, demoPhotoDataUri, demoEventDate } from "@/lib/demo-data";
@@ -31,9 +32,11 @@ export default async function Home() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="flex items-center justify-between px-4 py-4 sm:px-6">
-        <Logo markClassName="h-5 w-5" textClassName="text-base sm:text-lg" />
-        <TopControls />
+      <header className="px-4 py-4 sm:px-6">
+        <HeaderRow maxWidth="3xl">
+          <Logo markClassName="h-5 w-5" textClassName="text-base sm:text-lg" />
+          <TopControls />
+        </HeaderRow>
       </header>
 
       {/* hero */}
