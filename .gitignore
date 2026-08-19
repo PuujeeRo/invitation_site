@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the documented templates must be committed: they are the only record
+# of which env vars the app reads. Without this, `git add` silently skips them.
+!*.example
 
 # vercel
 .vercel

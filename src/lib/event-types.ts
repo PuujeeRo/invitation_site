@@ -10,7 +10,7 @@ export const EVENT_TYPES: {
 }[] = [
   { id: "birthday", label: "Birthday", labelMn: "Төрсөн өдөр", freeGuestLimit: 10 },
   { id: "wedding", label: "Wedding", labelMn: "Хурим", freeGuestLimit: 100 },
-  { id: "kids_first_birthday", label: "Kid's 1st Birthday", labelMn: "Хүүхдийн 1 нас", freeGuestLimit: 100 },
+  { id: "kids_first_birthday", label: "Kid's 1st Birthday", labelMn: "Хүүхдийн 1 нас", freeGuestLimit: 10 },
   { id: "graduation", label: "Graduation", labelMn: "Төгсөлт", freeGuestLimit: 100 },
   { id: "other", label: "Other", labelMn: "Бусад", freeGuestLimit: 10 },
 ];
