@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPaymentProvider } from "@/lib/payments";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { confirmMockPayment } from "./actions";
 
 // Stand-in checkout page used only when the mock payment provider is active
@@ -35,7 +36,7 @@ export default async function MockCheckoutPage({
   const eventName = event?.name ?? "";
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center px-6 py-16 text-center">
+    <PageContainer maxWidth="sm" className="flex flex-col items-center justify-center text-center">
       <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">Mock checkout (dev only)</p>
       <h1 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">{eventName}</h1>
       <p className="mt-1 text-3xl font-semibold text-zinc-900 dark:text-zinc-50">{payment.amount}₮</p>
@@ -52,6 +53,6 @@ export default async function MockCheckoutPage({
           </button>
         </form>
       )}
-    </div>
+    </PageContainer>
   );
 }

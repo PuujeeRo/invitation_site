@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { PAID_PRICE_MNT } from "@/lib/event-types";
+import { PageContainer } from "@/components/layout/PageContainer";
 import type { EventRow } from "@/lib/supabase/types";
 import { startCheckout } from "./actions";
 
@@ -31,7 +32,7 @@ export default async function UpgradePage({
   const checkout = startCheckout.bind(null, eventId);
 
   return (
-    <div className="mx-auto w-full max-w-md flex-1 px-6 py-16 text-center">
+    <PageContainer maxWidth="sm" className="text-center">
       <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{event.name}</h1>
       <p className="mt-2 text-3xl font-semibold text-zinc-900 dark:text-zinc-50">{PAID_PRICE_MNT}₮</p>
 
@@ -57,6 +58,6 @@ export default async function UpgradePage({
           {t.upgrade.payButton.replace("{price}", String(PAID_PRICE_MNT))}
         </button>
       </form>
-    </div>
+    </PageContainer>
   );
 }

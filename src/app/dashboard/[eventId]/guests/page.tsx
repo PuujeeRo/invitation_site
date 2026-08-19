@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { freeGuestLimitFor } from "@/lib/event-types";
 import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
+import { PageContainer } from "@/components/layout/PageContainer";
 import type { EventRow, NamedGuestRow, RsvpRow } from "@/lib/supabase/types";
 
 export default async function GuestsPage({ params }: { params: Promise<{ eventId: string }> }) {
@@ -46,7 +47,7 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
+    <PageContainer maxWidth="xl">
       <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
         {event.name} — {t.guests.titleSuffix}
       </h1>
@@ -113,7 +114,7 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
           </ul>
         )}
       </section>
-    </div>
+    </PageContainer>
   );
 }
 

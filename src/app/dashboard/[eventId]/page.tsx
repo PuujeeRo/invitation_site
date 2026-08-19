@@ -7,6 +7,7 @@ import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { CopyLinkButton } from "@/components/share/CopyLinkButton";
 import { MessengerShareButton } from "@/components/share/MessengerShareButton";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { AddGuestForm } from "./AddGuestForm";
 import { SendEmailButton } from "./SendEmailButton";
 import type { EventRow, NamedGuestRow } from "@/lib/supabase/types";
@@ -50,7 +51,7 @@ export default async function EventOverviewPage({
         : t.eventOverview.freeExpired;
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-10">
+    <PageContainer maxWidth="lg">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{event.name}</h1>
         <div className="flex items-center gap-4">
@@ -132,6 +133,6 @@ export default async function EventOverviewPage({
           </ul>
         )}
       </section>
-    </div>
+    </PageContainer>
   );
 }

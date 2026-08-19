@@ -5,6 +5,7 @@ import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
 import { TopControls } from "@/components/theme/TopControls";
 import { Logo } from "@/components/brand/Logo";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage() {
@@ -28,15 +29,15 @@ export default async function LoginPage() {
         </Link>
         <TopControls />
       </header>
-      <div className="flex flex-1 items-center justify-center px-6 py-16">
-        <div className="w-full max-w-sm">
+      <PageContainer maxWidth="md" className="flex flex-col items-center justify-center">
+        <div className="w-full">
           <h1 className="font-display text-2xl font-medium tracking-tight text-zinc-900 dark:text-zinc-50">
             {t.login.heading}
           </h1>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{t.login.subtitle}</p>
           <LoginForm />
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 }

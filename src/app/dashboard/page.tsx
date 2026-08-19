@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/i18n/get-locale";
 import { getDictionary } from "@/i18n/dictionaries";
+import { PageContainer } from "@/components/layout/PageContainer";
 import type { EventRow } from "@/lib/supabase/types";
 
 export default async function DashboardPage() {
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
   const t = getDictionary(locale);
 
   return (
-    <div className="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
+    <PageContainer maxWidth="2xl">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{t.dashboard.title}</h1>
         <Link
@@ -55,6 +56,6 @@ export default async function DashboardPage() {
           ))}
         </ul>
       )}
-    </div>
+    </PageContainer>
   );
 }
