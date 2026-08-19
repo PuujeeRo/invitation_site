@@ -10,7 +10,7 @@ export const MAX_WIDTH = {
   lg: "max-w-2xl", // ~672px -- standard form screens (new event, edit, event overview)
   xl: "max-w-3xl", // ~768px -- content-dense screens (guest responses table)
   "2xl": "max-w-4xl", // ~896px -- list views (dashboard event list)
-  "3xl": "max-w-5xl", // ~1024px -- wide showcase sections (landing hero/features)
+  "3xl": "max-w-7xl", // ~1280px -- wide showcase sections (landing hero, demo)
 } as const;
 
 export type PageMaxWidth = keyof typeof MAX_WIDTH;

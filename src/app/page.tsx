@@ -41,7 +41,7 @@ export default async function Home() {
 
       {/* hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-rose-50/60 via-white to-white px-4 pt-8 pb-14 sm:px-6 sm:pt-12 dark:from-indigo-950/40 dark:via-black dark:to-black">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
           <div className="flex max-w-xl flex-col items-center text-center lg:items-start lg:text-left">
             <p className="text-xs font-medium tracking-[0.2em] text-zinc-500 uppercase dark:text-zinc-500">
               {t.landing.eyebrow}

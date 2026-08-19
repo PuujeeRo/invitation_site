@@ -25,7 +25,7 @@ export function DemoClient() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center px-3 pb-16 sm:px-4">
+    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col items-center px-3 pb-16 sm:px-4">
       <h1 className="font-display mt-4 text-center text-2xl font-medium text-balance text-zinc-900 sm:text-3xl dark:text-zinc-50">
         {t.demo.title}
       </h1>
