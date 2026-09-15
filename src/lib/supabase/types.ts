@@ -64,6 +64,8 @@ export type RsvpRow = {
   updated_at: string;
 };
 
+import type { CheckoutPayload } from "@/lib/payments/types";
+
 export type PaymentRow = {
   id: string;
   event_id: string;
@@ -72,6 +74,10 @@ export type PaymentRow = {
   provider: PaymentProvider;
   status: PaymentStatus;
   provider_ref: string | null;
+  // Provider-rendered checkout material (QPay QR + bank deeplinks). See
+  // CheckoutPayload in lib/payments/types and migration 0004. Null for
+  // providers that hand back a hosted checkout page instead.
+  checkout: CheckoutPayload | null;
   created_at: string;
   paid_at: string | null;
 };

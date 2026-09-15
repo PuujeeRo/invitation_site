@@ -10,6 +10,7 @@
     "dev:postgrest": "./.localdev/postgrest.exe ./.localdev/postgrest.conf"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@supabase/ssr": "0.12.4",
     "@supabase/supabase-js": "2.112.3",
     "jose": "6.2.9",

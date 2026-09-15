@@ -59,7 +59,12 @@ export async function startCheckout(eventId: string) {
 
     await supabase
       .from("payments")
-      .update({ provider_ref: invoice.providerRef })
+      .update({
+        provider_ref: invoice.providerRef,
+        // Persisted so the checkout page can re-render the same QR on reload
+        // instead of minting a second QPay invoice per page view.
+        checkout: invoice.checkout ?? null,
+      })
       .eq("id", payment.id);
   } catch {
     await supabase.from("payments").update({ status: "failed" }).eq("id", payment.id);
