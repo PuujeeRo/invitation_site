@@ -164,19 +164,24 @@ export function QPayCheckout({
               <li key={bank.link}>
                 <a
                   href={bank.link}
-                  className="flex h-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-3 text-xs font-medium text-zinc-900 transition-transform hover:border-zinc-400 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
+                  className="flex h-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2.5 text-[11px] leading-tight font-medium text-zinc-900 transition-transform hover:border-zinc-400 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:border-zinc-600 dark:focus-visible:ring-zinc-100"
                 >
                   {bank.logo && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={bank.logo}
                       alt=""
-                      width={24}
-                      height={24}
-                      className="h-6 w-6 shrink-0 rounded"
+                      width={22}
+                      height={22}
+                      className="h-[22px] w-[22px] shrink-0 rounded"
                     />
                   )}
-                  <span className="truncate">{bank.name}</span>
+                  {/* Wraps to two lines rather than truncating: half the bank
+                      names here are longer than one grid cell ("Trade and
+                      Development bank", "National investment bank"), and a
+                      payer cannot pick the bank they hold an account with if
+                      the name is cut off. */}
+                  <span className="line-clamp-2 min-w-0">{bank.name}</span>
                 </a>
               </li>
             ))}
