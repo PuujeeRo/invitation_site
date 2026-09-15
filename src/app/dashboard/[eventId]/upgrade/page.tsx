@@ -19,11 +19,18 @@ export default async function UpgradePage({
   const { error } = await searchParams;
   const supabase = await createClient();
 
-  const { data: event } = await supabase
+  const { data: event, error: eventError } = await supabase
     .from("events")
     .select("*")
     .eq("id", eventId)
     .maybeSingle<EventRow>();
+
+  // Same distinction the QPay checkout page makes: a database that briefly
+  // could not be reached is a 500 to retry, not a 404 telling the organizer
+  // their event no longer exists.
+  if (eventError) {
+    throw new Error(`Could not load event ${eventId}: ${eventError.message}`);
+  }
 
   if (!event) notFound();
   if (event.is_paid) redirect(`/dashboard/${eventId}`);

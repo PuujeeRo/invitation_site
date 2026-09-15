@@ -19,11 +19,20 @@ export default async function QPayCheckoutPage({
   const { paymentId } = await params;
   const supabase = await createClient();
 
-  const { data: payment } = await supabase
+  const { data: payment, error } = await supabase
     .from("payments")
     .select("id, event_id, amount, currency, status, provider, checkout")
     .eq("id", paymentId)
     .maybeSingle<Pick<PaymentRow, "id" | "event_id" | "amount" | "currency" | "status" | "provider" | "checkout">>();
+
+  // A failed query and a missing row are not the same thing, and this page in
+  // particular must not conflate them: rendering "not found" at a checkout the
+  // organizer has already been redirected to reads as "your payment vanished",
+  // when the truth may be that the database was briefly unreachable. Let the
+  // error surface as a 500 the error boundary can offer a retry for.
+  if (error) {
+    throw new Error(`Could not load payment ${paymentId}: ${error.message}`);
+  }
 
   if (!payment || payment.provider !== "qpay") notFound();
   if (payment.status === "paid") redirect(`/dashboard/${payment.event_id}`);
